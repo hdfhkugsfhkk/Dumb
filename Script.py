@@ -3,7 +3,7 @@ class script(object):
 
 Here You Can Request Movie's, Just Sent <a href='https://t.me/ChithramMovieBot'>Movie Name</a> With Proper <a href='https://www.google.com/'>Google</a> Spelling..!!
 
-Fᴏʀ Mᴏʀᴇ Dᴇᴛᴀɪʟꜱ Cʟɪᴄᴋ /help
+"നാളെ വെളുക്കും വരെ ഓർക്കാൻ കൊറയെ മനോഹരമായ ദിവസങ്ങൾ എനിക്ക് സമ്മാനിച്ച എന്റെ കല്യാണിക്കുട്ടി, നന്ദി."
 
 Cᴏɴᴛᴀᴄᴛ Bᴏᴛ Dᴇᴠᴇʟᴏᴘᴇʀ (Oʀ) Rᴇᴘᴏʀᴛ Bᴜɢꜱ..!! 👉 @iam_fraz_bot</b>"""
 
@@ -39,7 +39,7 @@ Added By - {}
 ID - <code>{}</code>
 Name - {}
 """
-    CUSTOM_FILE_CAPTION = """<b>𝐻𝑒𝑙𝑙𝑜 👋 {mention} 😍
+    CUSTOM_FILE_CAPTION = """<b>𝐻𝑒𝑙𝑙𝑜 👋 കല്യാണിക്കുട്ടി🩵
     
 {file_name}
 
