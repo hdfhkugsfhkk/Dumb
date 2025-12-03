@@ -85,6 +85,14 @@ async def next_page(bot, query):
             for file in files
         ]
 
+    if btn and await db.get_linkstatus():  
+        linksyd = await db.get_link()
+        middle_index = len(btn) // 2
+        middle_btn = [
+            InlineKeyboardButton("ϟ Jᴏɪɴ Oᴜʀ Cʜᴀɴɴᴇʟ  ϟ", url=linksyd)
+        ]
+        btn = btn[:middle_index] + [middle_btn] + btn[middle_index:]
+    
     if 0 < offset < 10:
         off_set = 0
     elif offset == 0:
@@ -651,6 +659,14 @@ async def auto_filter(client, msg, spoll=False):
             for file in files
         ]
 
+    if btn and await db.get_linkstatus():  
+        linksyd = await db.get_link()
+        middle_index = len(btn) // 2
+        middle_btn = [
+            InlineKeyboardButton("ϟ Jᴏɪɴ Oᴜʀ Cʜᴀɴɴᴇʟ  ϟ", url=linksyd)
+        ]
+        btn = btn[:middle_index] + [middle_btn] + btn[middle_index:]
+    
     if offset != "":
         try:
             offset = int(offset)
