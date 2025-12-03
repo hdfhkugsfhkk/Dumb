@@ -347,9 +347,10 @@ async def start(client, message):
             title = file.file_name
             size=get_size(file.file_size)
             f_caption = f"<code>{title}</code>"
-            if CUSTOM_FILE_CAPTION:
+            syd = await db.get_file_cap()
+            if syd:
                 try:
-                    f_caption=CUSTOM_FILE_CAPTION.format(file_name= '' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption, mention=message.from_user.mention)    
+                    f_caption=syd.format(file_name= '' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption, mention=message.from_user.mention)    
                 except:
                     return
             await msg.edit_caption(f_caption)
@@ -361,9 +362,10 @@ async def start(client, message):
     title = files.file_name
     size=get_size(files.file_size)
     f_caption=files.caption
-    if CUSTOM_FILE_CAPTION:
+    syd = await db.get_file_cap()
+    if syd:
         try:
-            f_caption=CUSTOM_FILE_CAPTION.format(file_name= '' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption, mention=message.from_user.mention)
+            f_caption=syd.format(file_name= '' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption, mention=message.from_user.mention)
         except Exception as e:
             logger.exception(e)
             f_caption = f_caption
