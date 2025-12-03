@@ -980,3 +980,202 @@ async def delete_duplicate_files(client, message):
     
     # Send a final message indicating the total number of duplicates deleted
     await message.reply(f"Deleted {deleted_count} duplicate files. in {batch_size} batches")
+
+
+@Client.on_message(filters.command("caption") & filters.user(ADMINS))
+async def caption_menu(client, message):
+    buttons = InlineKeyboardMarkup([
+        [InlineKeyboardButton("📝 Set Caption", callback_data="cap:set")],
+        [InlineKeyboardButton("📌 Get Caption", callback_data="cap:get")],
+        [InlineKeyboardButton("🗑 Delete Caption", callback_data="cap:del")],
+        [InlineKeyboardButton("🔥 Delete All Groups", callback_data="cap:groups")]
+    ])
+    
+    await message.reply(
+        "⚙ **Caption Settings Menu**",
+        reply_markup=buttons
+    )
+
+@Client.on_callback_query(filters.regex(r"^cap:") & filters.user(ADMINS))
+async def caption_callbacks(client, cq):
+    action = cq.data.split(":")[1]
+    if action == "set":
+        existing = await db.get_file_cap()
+        ask_msg = await client.ask(
+            cq.message.chat.id,
+            (
+                f"**Current Caption:**\n`{existing}`\n\n"
+                "**Send new caption:**\n\n"
+                "`{mention}` — User mention\n"
+                "`{file_caption}` — Original caption\n"
+                "`{file_size}` — Size\n"
+                "`{file_name}` — File Name"
+            ),
+            filters=filters.text,
+            timeout=300
+        )
+        new_cap = ask_msg.text
+        await db.set_file_cap(new_cap)
+        await cq.message.reply(f"✅ **New caption saved:**\n`{new_cap}`")
+        return await cq.answer("Updated!")
+    if action == "get":
+        cap = await db.get_file_cap()
+        await cq.message.reply(f"📌 **Current Caption:**\n`{cap}`")
+        return await cq.answer("Fetched!")
+    if action == "del":
+        await db.set_file_cap(CUSTOM_FILE_CAPTION)
+        await cq.message.reply("🗑 Caption reset to default.")
+        return await cq.answer("Deleted!")
+    if action == "groups":
+        await db.delete_all_auth_groups()
+        await cq.message.reply("All AUTH_GROUP deleted.")
+        return await cq.answer("Done!")
+
+
+@Client.on_message(filters.command("setcap") & filters.user(ADMINS))
+async def set_caption_cmd(client, message):
+    existing = await db.get_file_cap()
+    ask_msg = await client.ask(
+        chat_id=message.chat.id,
+        text=(
+            f"**Current Caption:**\n`{existing}`\n\n"
+            "Send the *new caption*.\n\n"
+            "You can use variables:\n"
+            "`{mention}` — User mention\n"
+            "`{file_caption}` — File Caption\n"
+            "`{file_size}` — Size\n"
+            "`{file_name}` — File Name"
+        ),
+        filters=filters.text,
+        timeout=300
+    )
+    new_caption = ask_msg.text
+    await db.set_file_cap(new_caption)
+    await message.reply(f"✅ **New caption saved:**\n`{new_caption}`")
+@Client.on_message(filters.command("getcap") & filters.user(ADMINS))
+async def get_caption_cmd(client, message):
+    cap = await db.get_file_cap()
+    await message.reply(f"📌 **Current File Caption:**\n`{cap}`")
+
+@Client.on_message(filters.command("delcap") & filters.user(ADMINS))
+async def delete_caption_cmd(client, message):
+    await db.set_file_cap(CUSTOM_FILE_CAPTION)
+    await message.reply("🗑️ Caption reset to default.")
+
+@Client.on_message(filters.command("delallgroups") & filters.user(ADMINS))
+async def del_all_groups_cmd(client, message):
+    await db.delete_all_auth_groups()
+    await message.reply("🗑️ All AUTH_GROUP entries deleted except variables.")
+
+
+@Client.on_message(filters.command("delgroup") & filters.user(ADMINS))
+async def del_group_cmd(client, message):
+    groups = await db.get_auth_groups()
+    if not groups:
+        return await message.reply("❌ No groups to delete.")
+    groups_text = "\n".join(f"- `{g}`" for g in groups)
+    ask_msg = await client.ask(
+        chat_id=message.chat.id,
+        text=(
+            f"**AUTH_GROUP IDs:**\n{groups_text}\n\n"
+            "Send the **Group ID** to delete."
+        ),
+        filters=filters.text,
+        timeout=300
+    )
+    group_id = int(ask_msg.text.strip())
+    await db.delete_auth_group(group_id)
+    await message.reply(f"🗑️ Deleted group `{group_id}`")
+
+
+@Client.on_message(filters.command("getgroup"))
+async def get_group_cmd(client, message):
+    groups = await db.get_auth_groups()
+    if not groups:
+        return await message.reply("❌ No AUTH_GROUP entries.")
+
+    text = "\n".join(f"- `{g}`" for g in groups)
+    await message.reply(f"📌 **AUTH_GROUP IDs:**\n{text}")
+
+@Client.on_message(filters.command("setgroup") & filters.user(ADMINS))
+async def set_group_cmd(client, message):
+    existing = await db.get_auth_groups()
+    existing_text = ", ".join(str(i) for i in existing) if existing else "None"
+    ask_msg = await client.ask(
+        chat_id=message.chat.id,
+        text=(
+            f"**Existing AUTH_GROUP IDs:**\n`{existing_text}`\n\n"
+            "Send the **Group IDs** to add.\n"
+            "Multiple values allowed (space or newline).\n\n"
+            "**Example:**\n"
+            "`-10012345 -10067890`"
+        ),
+        filters=filters.text,
+        timeout=300
+    )
+    raw = ask_msg.text.strip().replace("\n", " ").split()
+    group_ids = [int(x) for x in raw]
+    await db.add_auth_groups(group_ids)
+    await message.reply("✅ Added group IDs:\n" + "\n".join(f"`{x}`" for x in group_ids))
+
+
+@Client.on_message(filters.command("link") & filters.user(ADMINS))
+async def link_panel(client, message):
+    link = await db.get_link()
+    status = await db.get_linkstatus()
+
+    state = "ON ✅" if status else "OFF ❎"
+    link_text = link if link else "❌ No link saved"
+
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("Enable", callback_data="link_on"),
+                InlineKeyboardButton("Disable", callback_data="link_off"),
+            ],
+            [
+                InlineKeyboardButton("Set Link", callback_data="link_set"),
+                InlineKeyboardButton("Delete Link", callback_data="link_del"),
+            ],
+        ]
+    )
+
+    await message.reply(
+        f"**Link Control Panel**\n\n"
+        f"Current Link: `{link_text}`\n"
+        f"Status: **{state}**",
+        reply_markup=keyboard,
+    )
+  
+@Client.on_callback_query(filters.regex("link_del"))
+async def cb_link_del(client, query):
+    await db.delete_link()
+    await query.answer("Deleted!")
+    await query.message.edit_text("🗑️ Link deleted successfully.")
+
+@Client.on_callback_query(filters.regex("link_set"))
+async def cb_link_set(client, query):
+    await query.answer()
+    await query.message.edit_text("Send me the **link** to save:")
+    user_id = query.from_user.id
+    response = await client.ask(
+        chat_id=user_id,
+        text="Please send the link now:",
+        filters=filters.text
+    )
+    link = response.text.strip()
+    await db.set_link(link)
+    await response.reply(f"✅ Link saved:\n`{link}`")
+
+@Client.on_callback_query(filters.regex("link_off"))
+async def cb_link_off(client, query):
+    await db.set_linkstatus(False)
+    await query.answer("Disabled!", show_alert=False)
+    await query.message.edit_text("⚪ Link feature turned OFF.")
+
+@Client.on_callback_query(filters.regex("link_on"))
+async def cb_link_on(client, query):
+    await db.set_linkstatus(True)
+    await query.answer("Enabled!", show_alert=False)
+    await query.message.edit_text("🟢 Link feature turned ON.")
+  
