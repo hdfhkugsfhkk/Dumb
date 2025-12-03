@@ -9,11 +9,12 @@ from database.filters_mdb import(
 )
 
 from database.connections_mdb import active_connection
-from utils import get_file_id, parser, split_quotes
+from utils import get_file_id, parser, split_quotes, auth_required
 from info import ADMINS
 
 
 @Client.on_message(filters.command(['filter', 'add']) & filters.incoming)
+@auth_required
 async def addfilter(client, message):
     userid = message.from_user.id if message.from_user else None
     if not userid:
@@ -117,6 +118,7 @@ async def addfilter(client, message):
 
 
 @Client.on_message(filters.command(['viewfilters', 'filters']) & filters.incoming)
+@auth_required
 async def get_all(client, message):
     
     chat_type = message.chat.type
@@ -180,6 +182,7 @@ async def get_all(client, message):
     )
         
 @Client.on_message(filters.command('del') & filters.incoming)
+@auth_required
 async def deletefilter(client, message):
     userid = message.from_user.id if message.from_user else None
     if not userid:
@@ -232,6 +235,7 @@ async def deletefilter(client, message):
         
 
 @Client.on_message(filters.command('delall') & filters.incoming)
+@auth_required
 async def delallconfirm(client, message):
     userid = message.from_user.id if message.from_user else None
     if not userid:
