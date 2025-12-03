@@ -1,6 +1,6 @@
 import logging
 from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid
-from info import REQ_CHANNEL1, REQ_CHANNEL2, LONG_IMDB_DESCRIPTION, MAX_LIST_ELM, ADMINS
+from info import REQ_CHANNEL1, REQ_CHANNEL2, LONG_IMDB_DESCRIPTION, MAX_LIST_ELM, ADMINS, AUTH_GROUPS, AUTH_USERS, LOG_CHANNEL
 from imdb import Cinemagoer
 import asyncio
 from pyrogram.types import Message, InlineKeyboardButton
@@ -12,6 +12,7 @@ from datetime import datetime
 from typing import List
 from database.users_chats_db import db
 from bs4 import BeautifulSoup
+from functools import wraps
 import requests
 import asyncio
 
@@ -122,7 +123,59 @@ async def is_subscribed(bot, query):
             return True
 
     return False
- 
+
+
+async def is_authorized(message):
+    if BOT_IS_PUBLIC: return True
+    chat = message.chat
+    if chat.type in (ChatType.GROUP, ChatType.SUPERGROUP):
+        auth_groups = await db.get_auth_groups()
+        return chat.id in auth_groups
+    if chat.type == ChatType.PRIVATE:
+        return message.from_user.id in AUTH_USERS
+    return False
+
+
+async def send_alert_to_admins(client, message):
+    chat = message.chat
+    if chat.type in (ChatType.GROUP, ChatType.SUPERGROUP):
+        username = f"@{chat.username}" if chat.username else "No username"
+        text = (
+            "**Unauthorized Group Attempt**\n\n"
+            f"• **Title:** {chat.title}\n"
+            f"• **Chat ID:** `{chat.id}`\n"
+            f"• **Username:** {username}\n"
+        )
+    else:
+        user = message.from_user
+        name = user.first_name
+        if user.last_name:
+            name += f" {user.last_name}"
+        user_link = f"[{name}](tg://user?id={user.id})"
+        text = (
+            "**Unauthorized User Attempt**\n\n"
+            f"• **Name:** {user_link}\n"
+            f"• **User ID:** `{user.id}`\n"
+            f"• **Username:** @{user.username if user.username else 'None'}\n"
+        )
+    try:
+        await client.send_message(LOG_CHANNEL, text)
+    except:
+        pass
+            
+def auth_required(func):
+    @wraps(func)
+    async def wrapper(client, message, *args, **kwargs):
+        if not await is_authorized(message):
+            try:
+                await send_alert_to_admins(client, message)
+            except:
+                pass
+            return
+        return await func(client, message, *args, **kwargs)
+    return wrapper
+
+
 async def get_poster(query, bulk=False, id=False, file=None):
     if not id:
         # https://t.me/GetTGLink/4183
