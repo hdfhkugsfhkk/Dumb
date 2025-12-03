@@ -4,11 +4,12 @@ from pyrogram.errors.exceptions.bad_request_400 import MessageTooLong, PeerIdInv
 from info import ADMINS, LOG_CHANNEL, SUPPORT_CHAT, MELCOW_NEW_USERS, REQ_CHANNEL1, REQ_CHANNEL2
 from database.users_chats_db import db
 from database.ia_filterdb import Media, Mediaa, db as clientDB, db1 as clientDB2, db2 as clientDB3
-from utils import get_size, temp, get_settings
+from utils import get_size, temp, get_settings, auth_required
 from Script import script
 from pyrogram.errors import ChatAdminRequired
 
 @Client.on_message(filters.command('stats') & filters.incoming)
+@auth_required
 async def get_ststs(bot, message):
     rju = await message.reply('Fetching stats..')
     tot = await Media.count_documents()
