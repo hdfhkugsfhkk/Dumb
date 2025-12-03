@@ -12,7 +12,7 @@ from pyrogram.enums import ChatType
 from database.ia_filterdb import Media, Mediaa, get_file_details, unpack_new_file_id, delete_files_below_threshold
 from database.users_chats_db import db
 from info import CHANNELS, ADMINS, REQ_CHANNEL1, REQ_CHANNEL2, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, DATABASE_URI, DATABASE_NAME
-from utils import get_settings, get_size, is_subscribed, is_requested_one, is_requested_two, save_group_settings, temp, check_loop_sub, check_loop_sub1, check_loop_sub2
+from utils import get_settings, get_size, is_subscribed, is_requested_one, is_requested_two, save_group_settings, temp, check_loop_sub, check_loop_sub1, check_loop_sub2, is_authorized, auth_required, send_alert_to_admins
 from database.connections_mdb import active_connection
 from plugins.pm_filter import auto_filter
 import re
@@ -107,6 +107,7 @@ async def send_file(client, query, ident, file_id):
    
 @Client.on_message(filters.command("start") & filters.incoming)
 async def start(client, message):   
+    if len(message.command) < 2 and not await is_authorized(message): return await send_alert_to_admins(client, message)
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         buttons = [
                 InlineKeyboardButton('⚙ Cyber Gram Movies ⚙', url=f'https://t.me/CGM_Files')
