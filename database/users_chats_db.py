@@ -13,6 +13,7 @@ class Database:
         self.req_two = self.db.reqtwo
         self.chat_col = self.db.chatcol
         self.chat_col2 = self.db.chatcol2
+        self.files = self.db.filed
 
 
     def new_user(self, id, name):
@@ -80,6 +81,71 @@ class Database:
         await self.col.delete_many({'id': int(user_id)})
 
 
+    async def set_link(self, link: str):
+        await self.files.update_one(
+            {"_id": "ONE_LINK"},
+            {"$set": {"link": link}},
+            upsert=True
+        )
+
+    async def get_link(self):
+        doc = await self.files.find_one({"_id": "ONE_LINK"})
+        return doc.get("link") if doc else None
+
+    async def delete_link(self):
+        await self.files.update_one(
+            {"_id": "ONE_LINK"},
+            {"$unset": {"link": ""}}
+        )
+
+    async def set_linkstatus(self, enabled: bool):
+        await self.files.update_one(
+            {"_id": "ONE_LINK"},
+            {"$set": {"enabled": enabled}},
+            upsert=True
+        )
+
+    async def get_linkstatus(self) -> bool:
+        doc = await self.files.find_one({"_id": "ONE_LINK"})
+        if doc:
+            return doc.get("enabled", False)
+        return False
+
+    async def set_file_cap(self, value):
+        await self.files.update_one(
+            {"_id": "file_cap"},
+            {"$set": {"value": value}},
+            upsert=True
+        )
+
+    async def get_file_cap(self, default=CUSTOM_FILE_CAPTION):
+        doc = await self.files.find_one({"_id": "file_cap"})
+        if doc:
+            return doc.get("value", default)
+        return default
+
+    async def add_auth_groups(self, group_ids: list[int]):
+        await self.files.update_one(
+            {"_id": "AUTH_GROUP"},
+            {"$addToSet": {"groups": {"$each": group_ids}}},
+            upsert=True
+        )
+
+    async def get_auth_groups(self):
+        doc = await self.files.find_one({"_id": "AUTH_GROUP"})
+        stored = doc.get("groups", []) if doc else []
+        merged = list(set(AUTH_GROUPS + stored))
+        return merged
+
+    async def delete_auth_group(self, group_id: int):
+        await self.files.update_one(
+            {"_id": "AUTH_GROUP"},
+            {"$pull": {"groups": group_id}}
+        )
+
+    async def delete_all_auth_groups(self):
+        await self.files.delete_one({"_id": "AUTH_GROUP"})
+    
     async def get_banned(self):
         users = self.col.find({'ban_status.is_banned': True})
         chats = self.grp.find({'chat_status.is_disabled': True})
