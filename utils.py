@@ -1,6 +1,6 @@
 import logging
 from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid
-from info import REQ_CHANNEL1, REQ_CHANNEL2, LONG_IMDB_DESCRIPTION, MAX_LIST_ELM, ADMINS, AUTH_GROUPS, AUTH_USERS, LOG_CHANNEL
+from info import REQ_CHANNEL1, REQ_CHANNEL2, LONG_IMDB_DESCRIPTION, MAX_LIST_ELM, ADMINS, AUTH_GROUPS, AUTH_USERS, BOT_IS_PUBLIC, LOG_CHANNEL
 from imdb import Cinemagoer
 import asyncio
 from pyrogram.types import Message, InlineKeyboardButton
@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 from functools import wraps
 import requests
 import asyncio
+from pyrogram.enums import ChatType
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
