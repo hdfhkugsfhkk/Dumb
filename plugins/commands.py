@@ -1121,7 +1121,7 @@ async def set_group_cmd(client, message):
     await message.reply("✅ Added group IDs:\n" + "\n".join(f"`{x}`" for x in group_ids))
 
 
-@Client.on_message(filters.command("link") & filters.user(ADMINS))
+@Client.on_message(filters.command("buttonlink") & filters.user(ADMINS))
 async def link_panel(client, message):
     link = await db.get_link()
     status = await db.get_linkstatus()
