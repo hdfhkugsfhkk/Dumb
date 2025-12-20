@@ -1,42 +1,57 @@
 from pyrogram import Client, filters
-from pyrogram.types import Message
 from pyrogram.enums import ChatType
-import re
+from asyncio import sleep
 
-PROMO_PATTERN = re.compile(
-    r"(t\.me|telegram\.me|http://|https://|www\.|@[\w_]+)",
-    re.IGNORECASE
+WARNING_TEXT = (
+    "⚠️ **Warning!**\n\n"
+    "🔗 Links / usernames / forwarded messages are not allowed in this group.\n"
+    "🎬 Please send only movie requests."
 )
 
-@Client.on_message(
-    filters.incoming &
-    (filters.group | filters.private) &
-    (
-        filters.forwarded |
-        filters.regex(PROMO_PATTERN)
-    )
-)
-async def anti_promo_handler(client: Client, message: Message):
+@Client.on_message(filters.group)
+async def anti_promo_group_only(client, message):
 
-    # Allow admins in groups
-    if message.chat.type in (ChatType.GROUP, ChatType.SUPERGROUP):
+    # Ignore service msgs
+    if not message.from_user:
+        return
+
+    user_id = message.from_user.id
+
+    # ✅ Skip ADMINS / OWNER
+    if user_id in ADMINS:
+        return
+
+    text = message.text or message.caption or ""
+
+    delete_reason = False
+
+    # ❌ Forwarded message
+    if message.forward_date:
+        delete_reason = True
+
+    # ❌ Links / usernames
+    elif (
+        "http://" in text or
+        "https://" in text or
+        "t.me/" in text or
+        text.startswith("@")
+    ):
+        delete_reason = True
+
+    if delete_reason:
         try:
-            member = await client.get_chat_member(
-                message.chat.id,
-                message.from_user.id
+            await message.delete()
+
+            warn = await client.send_message(
+                chat_id=message.chat.id,
+                text=WARNING_TEXT
             )
-            if member.status in ("administrator", "creator"):
-                return
+
+            # 🧹 Auto delete warning after 8 sec
+            await sleep(8)
+            await warn.delete()
+
         except:
             pass
 
-    # Delete forwarded messages
-    if message.forward_date:
-        await message.delete()
-        return
-
-    # Delete promo text
-    text = message.text or message.caption or ""
-    if PROMO_PATTERN.search(text):
-        await message.delete()
-        return
+        return  # 🚫 Stop here, auto-filter safe
