@@ -46,8 +46,7 @@ async def anti_promo(client, message):
     # Warning in group
     await message.reply_text(
         "⚠️ **Links / forwarded messages not allowed**\n"
-        "Use Group for request Movies 🎥 🍿 not for your അവരാതം 🎬
-        🙂👍",
+        "Use Group for request movies 🍿🎥 Not for send those things 📵😒",
         quote=True
     )
 
