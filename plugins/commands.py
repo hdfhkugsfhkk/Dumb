@@ -104,7 +104,25 @@ async def send_file(client, query, ident, file_id):
     await da.delete()
     await asyncio.sleep(600)
     await ok.delete()
-   
+
+
+@Client.on_message(filters.command("jsyd"))
+async def jreeq_menu(_, message):
+    btn = InlineKeyboardMarkup([
+        [InlineKeyboardButton("❌ Remove Channel from All Users", callback_data="jsyd:remove")],
+        [InlineKeyboardButton("❌ Delete ALL Join-Requests", callback_data="jsyd:del_all")],
+        [InlineKeyboardButton("📊 View Count", callback_data="jsyd:count")],
+        [InlineKeyboardButton("➕ Add Channel", callback_data="jsyd:add")],
+        [InlineKeyboardButton("🗑 Remove One", callback_data="jsyd:remove_one")],
+        [InlineKeyboardButton("❌ Clear All", callback_data="jsyd:clear")],
+        [InlineKeyboardButton("📄 View List", callback_data="jsyd:view")],
+        [InlineKeyboardButton("✖ Close", callback_data="jsyd:close")]
+    ])
+
+    await message.reply(
+        "**📂 Join-Request Manager**\nSelect an option:",
+        reply_markup=btn
+    )
 @Client.on_message(filters.command("start") & filters.incoming)
 async def start(client, message):   
     if len(message.command) < 2 and not await is_authorized(message): return await send_alert_to_admins(client, message)
