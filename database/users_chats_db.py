@@ -14,6 +14,9 @@ class Database:
         self.chat_col = self.db.chatcol
         self.chat_col2 = self.db.chatcol2
         self.files = self.db.filed
+        self.users = self.db.users
+        self.fsub = self.db.fsub
+        self.req = self.db.join_requests
 
 
     def new_user(self, id, name):
@@ -80,7 +83,35 @@ class Database:
     async def delete_user(self, user_id):
         await self.col.delete_many({'id': int(user_id)})
 
-
+    async def get_fsub_list(self):
+        return [x["_id"] async for x in self.fsub.find({}, {"_id": 1})]
+    async def add_fsub_channel(self, chat_id: int):
+        await self.fsub.update_one(
+            {"_id": chat_id},
+            {"$set": {"_id": chat_id}},
+            upsert=True
+        )
+    async def remove_fsub_channel(self, chat_id: int):
+        await self.fsub.delete_one({"_id": chat_id})
+    async def clear_fsub(self):
+        await self.fsub.delete_many({})
+    async def syd_user(self, user_id: int):
+        return await self.users.find_one({"_id": user_id})
+    async def add_user_channel(self, user_id: int, channel_id: int):
+        await self.users.update_one(
+            {"_id": user_id},
+            {"$addToSet": {"channels": channel_id}},
+            upsert=True
+        )
+    async def remove_channel_from_all_users(self, channel_id: int):
+        res = await self.users.update_many(
+            {"channels": channel_id},
+            {"$pull": {"channels": channel_id}}
+        )
+        return res.modified_count
+    async def del_all_join_req(self):
+        await self.req.delete_many({})
+        
     async def set_link(self, link: str):
         await self.files.update_one(
             {"_id": "ONE_LINK"},
