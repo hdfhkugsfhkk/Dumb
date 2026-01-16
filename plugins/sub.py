@@ -4,20 +4,26 @@ from info import REQ_CHANNEL1, REQ_CHANNEL2, ADMINS
 from database.users_chats_db import db
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
-@Client.on_message(filters.command("jsyd")) #& filters.user(ADMINS))
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+@Client.on_message(filters.command("jsyd"))
 async def jreeq_menu(_, message):
-    await message.reply("yo")
     btn = InlineKeyboardMarkup([
-        [InlineKeyboardButton("❌ Remove Channel from All Users", "jsyd:remove")],
-        [InlineKeyboardButton("❌ Delete ALL Join-Requests", "jsyd:del_all")],
-        [InlineKeyboardButton("📊 View Count", "jsyd:count")],
-        [InlineKeyboardButton("➕ Add Channel", "jsyd:add")],
-        [InlineKeyboardButton("🗑 Remove One", "jsyd:remove_one")],
-        [InlineKeyboardButton("❌ Clear All", "jsyd:clear")],
-        [InlineKeyboardButton("📄 View List", "jsyd:view")],
-        [InlineKeyboardButton("✖ Close", "jsyd:close")]
+        [InlineKeyboardButton("❌ Remove Channel from All Users", callback_data="jsyd:remove")],
+        [InlineKeyboardButton("❌ Delete ALL Join-Requests", callback_data="jsyd:del_all")],
+        [InlineKeyboardButton("📊 View Count", callback_data="jsyd:count")],
+        [InlineKeyboardButton("➕ Add Channel", callback_data="jsyd:add")],
+        [InlineKeyboardButton("🗑 Remove One", callback_data="jsyd:remove_one")],
+        [InlineKeyboardButton("❌ Clear All", callback_data="jsyd:clear")],
+        [InlineKeyboardButton("📄 View List", callback_data="jsyd:view")],
+        [InlineKeyboardButton("✖ Close", callback_data="jsyd:close")]
     ])
-    await message.reply("**📂 Join-Request Manager**\nSelect an option:", reply_markup=btn)
+
+    await message.reply(
+        "**📂 Join-Request Manager**\nSelect an option:",
+        reply_markup=btn
+    )
 
 
 
