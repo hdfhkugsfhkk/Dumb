@@ -4,8 +4,8 @@ from info import REQ_CHANNEL1, REQ_CHANNEL2, ADMINS
 from database.users_chats_db import db
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
-@Client.on_message(filters.command("jreq") & filters.user(ADMINS))
-async def jreq_menu(_, message):
+@Client.on_message(filters.command("jreq")) #& filters.user(ADMINS))
+async def jreeq_menu(_, message):
     btn = InlineKeyboardMarkup([
         [InlineKeyboardButton("❌ Remove Channel from All Users", "jsyd:remove")],
         [InlineKeyboardButton("❌ Delete ALL Join-Requests", "jsyd:del_all")],
