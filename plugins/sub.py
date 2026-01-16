@@ -7,23 +7,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQ
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-@Client.on_message(filters.command("jsyd"))
-async def jreeq_menu(_, message):
-    btn = InlineKeyboardMarkup([
-        [InlineKeyboardButton("❌ Remove Channel from All Users", callback_data="jsyd:remove")],
-        [InlineKeyboardButton("❌ Delete ALL Join-Requests", callback_data="jsyd:del_all")],
-        [InlineKeyboardButton("📊 View Count", callback_data="jsyd:count")],
-        [InlineKeyboardButton("➕ Add Channel", callback_data="jsyd:add")],
-        [InlineKeyboardButton("🗑 Remove One", callback_data="jsyd:remove_one")],
-        [InlineKeyboardButton("❌ Clear All", callback_data="jsyd:clear")],
-        [InlineKeyboardButton("📄 View List", callback_data="jsyd:view")],
-        [InlineKeyboardButton("✖ Close", callback_data="jsyd:close")]
-    ])
 
-    await message.reply(
-        "**📂 Join-Request Manager**\nSelect an option:",
-        reply_markup=btn
-    )
 
 
 
