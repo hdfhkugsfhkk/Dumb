@@ -2,6 +2,7 @@ from pyrogram import Client, filters, enums
 from pyrogram.types import ChatJoinRequest, Message
 from info import REQ_CHANNEL1, REQ_CHANNEL2, ADMINS
 from database.users_chats_db import db
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 @Client.on_message(filters.command("jreq") & filters.user(ADMINS))
 async def jreq_menu(_, message):
