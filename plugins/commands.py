@@ -175,7 +175,7 @@ async def start(client, message):
                     return
                 btn = []
                 if invite_link:
-                    btn.append([InlineKeyboardButton("⊛ Jᴏɪɴ Uᴘᴅᴀᴛᴇꜱ CʜᴀɴɴᴇL ¹⊛", url=invite_link.invite_link)])
+                    btn.append([InlineKeyboardButton("➳ 𝐽𝑂𝐼𝑁 𝑈𝑃𝐷𝐴𝑇𝐸 𝐶𝐻𝑁𝑁𝑁𝐸𝐿 ✺", url=invite_link.invite_link)])
                 if message.command[1] != "subscribe":
                     try:
                         kk, file_id = message.command[1].split("_", 1)
