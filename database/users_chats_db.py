@@ -100,8 +100,11 @@ class Database:
     async def add_user_channel(self, user_id: int, channel_id: int):
         await self.users.update_one(
             {"_id": user_id},
-            {"$addToSet": {"channels": channel_id}},
-            upsert=True
+             {
+                "$addToSet": {"channels": channel_id},
+                "$set": {"fsub_bypass": True}
+             },
+             upsert=True
         )
     async def remove_channel_from_all_users(self, channel_id: int):
         res = await self.users.update_many(
