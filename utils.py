@@ -51,6 +51,12 @@ async def get_authchannel(bot, query):
     uid = query.from_user.id
     doc = await db.syd_user(uid) or {}
     joined = doc.get("channels", []) or []
+    if doc.get("fsub_bypass"):
+        await db.users.update_one(
+            {"_id": uid},
+            {"$unset": {"fsub_bypass": ""}}
+        )
+        return True, None
     async def is_mem(ch):
         try:
             m = await bot.get_chat_member(int(ch), uid)
