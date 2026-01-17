@@ -1299,4 +1299,16 @@ async def jsyd_callback(client, cb):
         return await cb.message.edit_text(f"✅ Removed `{cid}`, `{m}` from force-sub list.")
     if d == "menu":
         return await send_jsyd_menu(cb.message)
-        
+
+
+
+@Client.on_chat_join_request()
+async def join_reqs(client, message: ChatJoinRequest):
+    authchnl = await db.get_fsub_list()
+    if message.chat.id not in authchnl:
+        return
+    try:
+        await db.add_user_channel(message.from_user.id, message.chat.id)
+    except Exception as e:
+        await client.send_message(7756047880, e)
+    
