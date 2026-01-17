@@ -113,7 +113,7 @@ class Database:
         )
         return res.modified_count
     async def del_all_join_req(self):
-        await self.req.delete_many({})
+        await self.users.delete_many({})
         
     async def set_link(self, link: str):
         await self.files.update_one(
