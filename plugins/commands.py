@@ -164,18 +164,22 @@ async def start(client, message):
 
     if FSUB:
         try:
-            fsub, ch1 = await get_authchannel(client, message)
+            fsub, ch1, ch2 = await get_authchannel(client, message)
             if not fsub:
                 try:
                     invite_link = None
                     if ch1:
                         invite_link = await client.create_chat_invite_link(int(ch1), creates_join_request=True)
+                    if ch2:
+                        invite_link2 = await client.create_chat_invite_link(int(ch2), creates_join_request=True)
                 except ChatAdminRequired:
                     logger.error("Make sure Bot is admin in Forcesub channel")
                     return
                 btn = []
                 if invite_link:
                     btn.append([InlineKeyboardButton("➳ 𝐽𝑂𝐼𝑁 𝑈𝑃𝐷𝐴𝑇𝐸 𝐶𝐻𝑁𝑁𝑁𝐸𝐿 ✺", url=invite_link.invite_link)])
+                if invite_link2:
+                    btn.append([InlineKeyboardButton("➳ 𝐽𝑂𝐼𝑁 𝑈𝑃𝐷𝐴𝑇𝐸 𝐶𝐻𝑁𝑁𝑁𝐸𝐿 ✺", url=invite_link2.invite_link)])
                 if message.command[1] != "subscribe":
                     try:
                         kk, file_id = message.command[1].split("_", 1)
