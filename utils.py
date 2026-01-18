@@ -47,7 +47,7 @@ class temp(object):
 async def get_authchannel(bot, query):
     auth = await db.get_fsub_list()
     if not auth:
-        return True, None
+        return True, None, None
     uid = query.from_user.id
     doc = await db.syd_user(uid) or {}
     joined = doc.get("channels", []) or []
@@ -56,18 +56,25 @@ async def get_authchannel(bot, query):
             {"_id": uid},
             {"$unset": {"fsub_bypass": ""}}
         )
-        return True, None
+        return True, None, None
+
     async def is_mem(ch):
         try:
             m = await bot.get_chat_member(int(ch), uid)
             return m.status != enums.ChatMemberStatus.BANNED
         except Exception:
-            True
+            return False
+    pending = []
     for ch in auth:
         if ch not in joined and not await is_mem(ch):
-            return False, ch
+            pending.append(ch)
+            if len(pending) == 2:
+                break
+    if pending:
+        return False, pending[0], pending[1] if len(pending) > 1 else None
 
-    return True, None
+    return True, None, None
+
     
 async def check_loop_sub(client, message):
     count = 0
