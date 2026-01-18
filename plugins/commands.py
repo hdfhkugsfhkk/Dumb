@@ -167,7 +167,7 @@ async def start(client, message):
             fsub, ch1, ch2 = await get_authchannel(client, message)
             if not fsub:
                 try:
-                    invite_link = None
+                    invite_link, invite_link2 = None, None
                     if ch1:
                         invite_link = await client.create_chat_invite_link(int(ch1), creates_join_request=True)
                     if ch2:
