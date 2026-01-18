@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.enums import ChatMemberStatus
-import re
+import asyncio
 from info import LOG_CHANNEL
 
 LINK_REGEX = r"(https?://|t\.me/|telegram\.me/|@[\w_]+)"
@@ -37,18 +37,25 @@ async def anti_promo(client, message):
 
     reason = "Forwarded Message" if message.forward_date else "Link / Username"
 
-    # Delete message
+    # Delete the message
     try:
         await message.delete()
     except:
         pass
 
-    # Warning in group
-    await message.reply_text(
+    # Send warning in group
+    warn = await message.reply_text(
         "⚠️ **Links / forwarded messages not allowed**\n"
-        "Use Group for request movies 🍿🎥 Not for send those things 📵😒",
+        "Use Group for request movies 🍿🎥",
         quote=True
     )
+
+    # Auto delete warning after 10 seconds
+    await asyncio.sleep(10)
+    try:
+        await warn.delete()
+    except:
+        pass
 
     # Log to channel
     log_text = (
