@@ -318,16 +318,3 @@ class Database:
         
         
 db = Database(DATABASE_URI, DATABASE_NAME)
-async def get_fsub_index(user_id: int) -> int:
-    user = await users.find_one({"_id": user_id})
-    if not user:
-        return 0
-    return user.get("fsub_index", 0)
-
-
-async def update_fsub_index(user_id: int, index: int):
-    await users.update_one(
-        {"_id": user_id},
-        {"$set": {"fsub_index": index}},
-        upsert=True
-    )
