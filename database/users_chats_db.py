@@ -100,12 +100,26 @@ class Database:
     async def add_user_channel(self, user_id: int, channel_id: int):
         await self.users.update_one(
             {"_id": user_id},
-             {
-                "$addToSet": {"channels": channel_id},
-                "$set": {"fsub_bypass": True}
-             },
-             upsert=True
+            {"$addToSet": {"channels": channel_id}},
+            upsert=True
         )
+        auth_channels = await self.get_fsub_list()
+        total_required = len(auth_channels)
+        doc = await self.users.find_one({"_id": user_id}) or {}
+        joined = doc.get("channels", [])
+        joined_count = len(set(joined) & set(auth_channels))
+        bypass = False
+        if joined_count >= 2:
+            if joined_count % 2 == 0:
+                bypass = True
+            elif total_required % 2 == 1 and joined_count == total_required:
+                bypass = True
+        if bypass:
+            await self.users.update_one(
+                {"_id": user_id},
+                {"$set": {"fsub_bypass": True}}
+            )
+
     async def remove_channel_from_all_users(self, channel_id: int):
         res = await self.users.update_many(
             {"channels": channel_id},
