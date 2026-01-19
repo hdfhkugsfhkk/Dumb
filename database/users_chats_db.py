@@ -14,7 +14,7 @@ class Database:
         self.chat_col = self.db.chatcol
         self.chat_col2 = self.db.chatcol2
         self.files = self.db.filed
-        self.users = self.db.users
+        self.users = self.db.userss
         self.fsub = self.db.fsub
         self.req = self.db.join_requests
 
