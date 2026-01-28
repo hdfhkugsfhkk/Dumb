@@ -43,6 +43,35 @@ class temp(object):
     B_NAME = None
     SETTINGS = {}
 
+async def update_sub_buttons(client, message, sh):
+    for _ in range(24):
+        await asyncio.sleep(0.5)
+
+        ok, *channels = await get_authchannel(client, message)
+        if ok:
+            with contextlib.suppress(Exception):
+                await sh.delete()
+            return True
+
+        btn = []
+        for i, ch in enumerate(filter(None, channels), start=1):
+            try:
+                link = (await client.create_chat_invite_link(
+                    ch, creates_join_request=True
+                )).invite_link
+                btn.append([InlineKeyboardButton(
+                    f"〄 Rᴇǫᴜᴇsᴛ Tᴏ Jᴏɪɴ Cʜᴀɴɴᴇʟ {i} 〄",
+                    url=link
+                )])
+            except:
+                pass
+
+        with contextlib.suppress(Exception):
+            await sh.edit_reply_markup(InlineKeyboardMarkup(btn))
+
+    return False
+
+    
 
 async def get_authchannel(bot, query):
     auth = await db.get_fsub_list()
