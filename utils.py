@@ -1,6 +1,6 @@
 import logging
 from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid
-from info import REQ_CHANNEL1, REQ_CHANNEL2, LONG_IMDB_DESCRIPTION, MAX_LIST_ELM, ADMINS, AUTH_GROUPS, AUTH_USERS, BOT_IS_PUBLIC, LOG_CHANNEL
+from info import REQ_CHANNEL1, REQ_CHANNEL2, LONG_IMDB_DESCRIPTION, MAX_LIST_ELM, ADMINS, AUTH_GROUPS, AUTH_USERS, BOT_IS_PUBLIC, SET_SYDSEC, LOG_CHANNEL
 from imdb import Cinemagoer
 import asyncio
 from pyrogram.types import Message, InlineKeyboardButton
@@ -44,7 +44,7 @@ class temp(object):
     SETTINGS = {}
 
 async def update_sub_buttons(client, message, sh):
-    for _ in range(24):
+    for _ in range(SET_SYDSEC*2):
         await asyncio.sleep(0.5)
 
         ok, *channels = await get_authchannel(client, message)
