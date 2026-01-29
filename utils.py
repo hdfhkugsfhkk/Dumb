@@ -46,14 +46,18 @@ class temp(object):
 
 async def update_sub_buttons(client, message, sh):
     cache = {}
+
     for _ in range(SET_SYDSEC * 2):
         await asyncio.sleep(0.5)
 
         ok, *channels = await get_authchannel(client, message)
         if ok:
-            with contextlib.suppress(Exception):
+            try:
                 await sh.delete()
+            except:
+                pass
             return True
+
         btn = []
         for ch in filter(None, channels):
             if ch not in cache:
@@ -63,13 +67,19 @@ async def update_sub_buttons(client, message, sh):
                     )).invite_link
                 except:
                     continue
+
             btn.append([InlineKeyboardButton(
                 "➳ 𝐽𝑂𝐼𝑁 𝑈𝑃𝐷𝐴𝑇𝐸 𝐶𝐻𝐴𝑁𝑁𝐸𝐿 ✺",
                 url=cache[ch]
             )])
-        with contextlib.suppress(Exception):
+
+        try:
             await sh.edit_reply_markup(InlineKeyboardMarkup(btn))
+        except:
+            continue 
+
     return False
+
 
 
     
