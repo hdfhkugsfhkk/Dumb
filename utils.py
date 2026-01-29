@@ -16,6 +16,7 @@ from functools import wraps
 import requests
 import asyncio
 from pyrogram.enums import ChatType
+from contextlib import suppress
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
