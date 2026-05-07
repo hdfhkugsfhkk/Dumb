@@ -37,14 +37,7 @@ incol = indb['auto_del']
 infile = indb['file_reply_text']
 restarti = indb['restart']
 
-DELETE_TXT = """<b>📁 <u>Important</u> ⚠️
-
-<blockquote>ഇപ്പൊ അയച്ച് തന്ന Movie Files 10മിനിറ്റിൽ Delete ആകും. അതിന് മുമ്പ് അത് saved messages forward അക്കി വെച്ചോ.. </blockquote>
-
-
-<blockquote>Please save the file to your saved messages, it will be deleted in 10.00 mins</blockquote>
-
-                ▶ @CGM_Files ◀</b>"""
+DELETE_TXT = script.DELETE_TXT
 
 async def admin_check(message: Message) -> bool:
     if not message.from_user: return False
@@ -199,73 +192,7 @@ async def start(client, message):
         except Exception as e:
             logger.error(f"Error in subscription check: {e}")
             
-    if REQ_CHANNEL1 and not await is_requested_one(client, message):
-        btn = [[
-            InlineKeyboardButton(
-                "➳ 𝐽𝑂𝐼𝑁 𝑈𝑃𝐷𝐴𝑇𝐸 𝐶𝐻𝑁𝑁𝑁𝐸𝐿 ✺", url=client.req_link1)
-        ]]
-        should_run_check_loop_sub1 = True
-        should_run_check_loop_sub = False
-        try:
-            if REQ_CHANNEL2 and not await is_requested_two(client, message):
-                btn.append(
-                      [
-                    InlineKeyboardButton(
-                        "➳ 𝐽𝑂𝐼𝑁 𝑈𝑃𝐷𝐴𝑇𝐸 𝐶𝐻𝑁𝑁𝑁𝐸𝐿 ✺", url=client.req_link2)
-                      ]
-                )
-                should_run_check_loop_sub = True                      
-        except Exception as e:
-            print(e)
-        if message.command[1] != "subscribe":
-            try:
-                kk, file_id = message.command[1].split("_", 1)
-                pre = 'checksubp' if kk == 'filep' else 'checksub' 
-                btn.append([InlineKeyboardButton("🔄 Try Again 🔄", callback_data=f"{pre}#{file_id}")])
-            except (IndexError, ValueError):
-                btn.append([InlineKeyboardButton("🔄 Try Again 🔄", url=f"https://t.me/{temp.U_NAME}?start={message.command[1]}")])
-        sh = await client.send_message(
-            chat_id=message.from_user.id,
-            text="**♦️ 𝗥𝗘𝗔𝗗 𝗧𝗛𝗜𝗦 𝗜𝗡𝗦𝗧𝗥𝗨𝗖𝗧𝗜𝗢𝗡 ♦️\n\nനിങ്ങൾ ചോദിക്കുന്ന സിനിമകൾ ലഭിക്കണം എന്നുണ്ടെങ്കിൽ നിങ്ങൾ ഞങ്ങളുടെ ചാനലിൽ ജോയിൻ ചെയ്തിരിക്കണം. ജോയിൻ ചെയ്യാൻ ✺ 𝐽𝑂𝐼𝑁 𝑈𝑃𝐷𝐴𝑇𝐸 𝐶𝐻𝑁𝑁𝑁𝐸𝐿 ✺ എന്ന ബട്ടണിൽ ക്ലിക്ക് ചെയ്യാവുന്നതാണ്.\n\nജോയിൻ ചെയ്ത ശേഷം 🔄 Try Again 🔄 എന്ന ബട്ടണിൽ അമർത്തിയാൽ നിങ്ങൾക്ക് ഞാൻ ആ സിനിമ അയച്ചു തരുന്നതാണ്..\n\nCLICK ✺ 𝐽𝑂𝐼𝑁 𝑈𝑃𝐷𝐴𝑇𝐸 𝐶𝐻𝑁𝑁𝑁𝐸𝐿 ✺ AND THEN CLICK 🔄 Try Again 🔄 BUTTON TO GET MOVIE FILE 🗃️**",
-            reply_markup=InlineKeyboardMarkup(btn),
-            parse_mode=enums.ParseMode.MARKDOWN
-            )
-        if should_run_check_loop_sub:
-            check = await check_loop_sub(client, message)
-        elif should_run_check_loop_sub1:
-            check = await check_loop_sub1(client, message)
-        if check:     
-            await send_file(client, message, pre, file_id)
-            await sh.delete()        
-            return
-        else:
-            return False
-
-    if REQ_CHANNEL2 and not await is_requested_two(client, message):
-        btn = [[
-            InlineKeyboardButton(
-                "Update Channel 2", url=client.req_link2)
-        ]]
-        if message.command[1] != "subscribe":
-            try:
-                kk, file_id = message.command[1].split("_", 1)
-                pre = 'checksubp' if kk == 'filep' else 'checksub' 
-                btn.append([InlineKeyboardButton("Try Again", callback_data=f"{pre}#{file_id}")])
-            except (IndexError, ValueError):
-                btn.append([InlineKeyboardButton("Try Again", url=f"https://t.me/{temp.U_NAME}?start={message.command[1]}")])
-        sh = await client.send_message(
-            chat_id=message.from_user.id,
-            text="**♦️ 𝗥𝗘𝗔𝗗 𝗧𝗛𝗜𝗦 𝗜𝗡𝗦𝗧𝗥𝗨𝗖𝗧𝗜𝗢𝗡 ♦️\n\nനിങ്ങൾ ചോദിക്കുന്ന സിനിമകൾ ലഭിക്കണം എന്നുണ്ടെങ്കിൽ നിങ്ങൾ ഞങ്ങളുടെ ചാനലിൽ ജോയിൻ ചെയ്തിരിക്കണം. ജോയിൻ ചെയ്യാൻ ✺ 𝐽𝑂𝐼𝑁 𝑈𝑃𝐷𝐴𝑇𝐸 𝐶𝐻𝑁𝑁𝑁𝐸𝐿 ✺ എന്ന ബട്ടണിൽ ക്ലിക്ക് ചെയ്യാവുന്നതാണ്.\n\nജോയിൻ ചെയ്ത ശേഷം 🔄 Try Again 🔄 എന്ന ബട്ടണിൽ അമർത്തിയാൽ നിങ്ങൾക്ക് ഞാൻ ആ സിനിമ അയച്ചു തരുന്നതാണ്..\n\nജോയിൻ ചെയ്ത ശേഷം 🔄 Try Again 🔄 എന്ന ബട്ടണിൽ അമർത്തിയാൽ നിങ്ങൾക്ക് ഞാൻ ആ സിനിമ അയച്ചു തരുന്നതാണ്..\n\nCLICK ✺ 𝐽𝑂𝐼𝑁 𝑈𝑃𝐷𝐴𝑇𝐸 𝐶𝐻𝑁𝑁𝑁𝐸𝐿 ✺ AND THEN CLICK 🔄 Try Again 🔄 BUTTON TO GET MOVIE FILE 🗃️**",
-            reply_markup=InlineKeyboardMarkup(btn),
-            parse_mode=enums.ParseMode.MARKDOWN
-        )
-        check = await check_loop_sub2(client, message)
-        if check:
-            await send_file(client, message, pre, file_id)
-            await sh.delete()     
-            return 
-        else:
-            return False
+    
     if len(message.command) == 2 and message.command[1].startswith('getfile'):
         searches = message.command[1].split("-", 1)[1] 
         search = searches.replace('-',' ')
@@ -856,94 +783,6 @@ async def set_deltime_command(client, message):
             else:
                 await message.reply("𝗨𝘀𝗲 𝘁𝗶𝗺𝗲 𝗶𝗻 𝘁𝗵𝗲 𝗳𝗼𝗿𝗺𝗮𝘁 𝘀, 𝗺, 𝗼𝗿 𝗵:\n\n* <code>1s</code> 𝗳𝗼𝗿 𝟭 𝘀𝗲𝗰𝗼𝗻𝗱\n* <code>1m</code> 𝗳𝗼𝗿 𝟭 𝗺𝗶𝗻𝘂𝘁𝗲\n* <code>1h</code> 𝗳𝗼𝗿 𝟭 𝗵𝗼𝘂𝗿")
 
-
-@Client.on_message(filters.command("setchat1") & filters.user(ADMINS))
-async def add_fsub_chats(bot: Client, update: Message):
-    await update.react("🌭")
-    chat = update.command[1] if len(update.command) > 1 else None
-    if not chat:
-        await update.reply_text("Invalid chat id.", quote=True)
-        return
-    else:
-        chat = int(chat)
-    await db.add_fsub_chat(chat)
-
-    text = f"Added chat <code>{chat}</code> to the database."
-    await update.reply_text(text=text, quote=True, parse_mode=enums.ParseMode.HTML)
-    with open("./dynamic.env", "wt+") as f:
-        f.write(f"REQ_CHANNEL1={chat}\n")
-    restarti.update_one(
-        {"_id": "frestart"},
-        {"$set": {"restart": "on"}},
-        upsert=True
-    )
-    os.execl(sys.executable, sys.executable, "bot.py")
-
-
-@Client.on_message(filters.command("delchat1") & filters.user(ADMINS))
-async def clear_fsub_chats(bot: Client, update: Message):
-    await update.react("👍")
-    await db.delete_fsub_chat(chat_id=(await db.get_fsub_chat())['chat_id'])
-    await update.reply_text(text="Deleted fsub chat from the database.", quote=True)
-    with open("./dynamic.env", "wt+") as f:
-        f.write(f"REQ_CHANNEL1=False\n")
-
-    logger.info("Restarting to update REQ_CHANNEL from database...")
-    os.execl(sys.executable, sys.executable, "bot.py")
-    
-@Client.on_message(filters.command("viewchat1") & filters.user(ADMINS))
-async def get_fsub_chat(bot: Client, update: Message):
-    await update.react("👍")
-    chat = await db.get_fsub_chat()
-    if not chat:
-        await update.reply_text("No fsub chat found in the database.", quote=True)
-        return
-    else:
-        await update.reply_text(f"Fsub chat: <code>{chat['chat_id']}</code>", quote=True, parse_mode=enums.ParseMode.HTML)
-        
-@Client.on_message(filters.command("setchat2") & filters.user(ADMINS))
-async def add_fsub_chats2(bot: Client, update: Message):
-    await update.react("🍌")
-    chat = update.command[1] if len(update.command) > 1 else None
-    if not chat:
-        await update.reply_text("Invalid chat id.", quote=True)
-        return
-    else:
-        chat = int(chat)
-    await db.add_fsub_chat2(chat)
-
-    text = f"Added chat <code>{chat}</code> to the database."
-    await update.reply_text(text=text, quote=True, parse_mode=enums.ParseMode.HTML)
-    with open("./dynamic.env", "wt+") as f:
-        f.write(f"REQ_CHANNEL2={chat}\n")
-    restarti.update_one(
-        {"_id": "frestart"},
-        {"$set": {"restart": "on"}},
-        upsert=True
-    )
-    os.execl(sys.executable, sys.executable, "bot.py")
-
-
-@Client.on_message(filters.command("delchat2") & filters.user(ADMINS))
-async def clear_fsub_chats2(bot: Client, update: Message):
-    await update.react("👍")
-    await db.delete_fsub_chat2(chat_id=(await db.get_fsub_chat2())['chat_id'])
-    await update.reply_text(text="Deleted fsub chat from the database.", quote=True)
-    with open("./dynamic.env", "wt+") as f:
-        f.write(f"REQ_CHANNEL2=False\n")
-
-    logger.info("Restarting to update REQ_CHANNEL from database...")
-    os.execl(sys.executable, sys.executable, "bot.py")
-    
-@Client.on_message(filters.command("viewchat2") & filters.user(ADMINS))
-async def get_fsub_chat2(bot: Client, update: Message):
-    await update.react("👍")
-    chat = await db.get_fsub_chat2()
-    if not chat:
-        await update.reply_text("No fsub chat found in the database.", quote=True)
-        return
-    else:
-        await update.reply_text(f"Fsub chat: <code>{chat['chat_id']}</code>", quote=True, parse_mode=enums.ParseMode.HTML)
 
 @Client.on_message(filters.command("deletefiles") & filters.user(ADMINS))
 async def deletemultiplefiles(bot, message):
