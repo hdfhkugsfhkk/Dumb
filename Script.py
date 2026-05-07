@@ -48,3 +48,13 @@ Name - {}
 ➲ <a href='https://t.me/CGM_Files'>@MAIN CHANNEL</a>
 ╚═══ ᴊᴏɪɴ ᴡɪᴛʜ ᴜs ═══╝
 </b>"""
+
+
+DELETE_TXT = """<b>📁 <u>Important</u> ⚠️
+
+<blockquote>ഇപ്പൊ അയച്ച് തന്ന Movie Files 10മിനിറ്റിൽ Delete ആകും. അതിന് മുമ്പ് അത് saved messages forward അക്കി വെച്ചോ.. </blockquote>
+
+
+<blockquote>Please save the file to your saved messages, it will be deleted in 10.00 mins</blockquote>
+
+                ▶ @CGM_Files ◀</b>"""
