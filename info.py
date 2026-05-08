@@ -12,6 +12,8 @@ def is_enabled(value, default):
     else:
         return default
 
+
+#update here
 DATABASE_URI = "mongodb+srv://AYU:AYU@cluster0.bxkuzfk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 DATABASE_URI2 = "mongodb+srv://AYU2:AYU2@cluster0.gi1dpjc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 DATABASE_URI3 = "mongodb+srv://AYU3:AYU3@cluster0.bv3pk88.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
@@ -21,9 +23,9 @@ ADMINS = [7579162275, 7756047880]
 async def load_config():
     global DATABASE_URI, DATABASE_URI2, DATABASE_URI3, ADMINS
     data = await db.config.find_one({"_id": "CONFIG"}) or {}
-    DATABASE_URI = data.get("DATABASE1")
-    DATABASE_URI2 = data.get("DATABASE2")
-    DATABASE_URI3 = data.get("DATABASE3")
+    DATABASE_URI = data.get("DATABASE1") #Dont touch here
+    DATABASE_URI2 = data.get("DATABASE2") #Dont touch here
+    DATABASE_URI3 = data.get("DATABASE3") #Dont touch here
 
     ADMINS = data.get("ADMINS", [])
     
