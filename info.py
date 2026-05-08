@@ -12,6 +12,21 @@ def is_enabled(value, default):
     else:
         return default
 
+DATABASE_URI = "mongodb+srv://AYU:AYU@cluster0.bxkuzfk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+DATABASE_URI2 = "mongodb+srv://AYU2:AYU2@cluster0.gi1dpjc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+DATABASE_URI3 = "mongodb+srv://AYU3:AYU3@cluster0.bv3pk88.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+ADMINS = [7579162275, 7756047880]
+
+
+async def load_config():
+    global DATABASE_URI, DATABASE_URI2, DATABASE_URI3, ADMINS
+    data = await db.config.find_one({"_id": "CONFIG"}) or {}
+    DATABASE_URI = data.get("DATABASE1")
+    DATABASE_URI2 = data.get("DATABASE2")
+    DATABASE_URI3 = data.get("DATABASE3")
+
+    ADMINS = data.get("ADMINS", [])
+    
 # Bot information
 SESSION = environ.get('SESSION', 'autodelete')
 API_ID = int(environ.get("API_ID", "26826540"))
@@ -39,9 +54,6 @@ REQ_CHANNEL2=environ.get("REQ_CHANNEL2")
 REQ_CHANNEL2 = (int(REQ_CHANNEL2) if REQ_CHANNEL2 and id_pattern.search(REQ_CHANNEL2) else False) if REQ_CHANNEL2 is not None else None
 
 # MongoDB information
-DATABASE_URI = environ.get('DATABASE_URI', "mongodb+srv://AYU:AYU@cluster0.bxkuzfk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-DATABASE_URI2 = environ.get('DATABASE_URI2', "mongodb+srv://AYU2:AYU2@cluster0.gi1dpjc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-DATABASE_URI3 = environ.get('DATABASE_URI3', "mongodb+srv://AYU3:AYU3@cluster0.bv3pk88.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 DATABASE_NAME = environ.get('DATABASE_NAME', "CGM_Files")
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'CGM_Files')
 
