@@ -56,7 +56,11 @@ class Bot(Client):
         temp.BANNED_USERS = b_users
         temp.BANNED_CHATS = b_chats
         await super().start()
-        await Media.ensure_indexes()
+        await load_config()
+        try:
+            await Media.ensure_indexes()
+        except Exception as e:
+            logging.info(e)
         me = await self.get_me()
         temp.ME = me.id
         temp.U_NAME = me.username
@@ -64,49 +68,12 @@ class Bot(Client):
         self.username = '@' + me.username
         logging.info(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
         logging.info(LOG_STR)
-        if REQ_CHANNEL1 == None:
-            with open("./dynamic.env", "wt+") as f:
-                req = await db.get_fsub_chat()                
-                if req is None:
-                    req = False
-                else:
-                    req = req['chat_id']                   
-                f.write(f"REQ_CHANNEL1={req}\n")
-                
-            logging.info("Loading REQ_CHANNEL from database...") 
-            os.execl(sys.executable, sys.executable, "bot.py")
-            return 
-        if REQ_CHANNEL2 == None:
-            with open("./dynamic.env", "wt+") as f:
-                req2 = await db.get_fsub_chat2()
-                if req2 is None:
-                    req2 = False
-                else:
-                    req2 = req2['chat_id']
-                f.write(f"REQ_CHANNEL2={req2}\n")
-            logging.info("Loading REQ_CHANNEL...") 
-            os.execl(sys.executable, sys.executable, "bot.py")
-            return 
-        await self.send_message(chat_id=LOG_CHANNEL, text="restarted ❤️‍🩹")
         
+        await self.send_message(chat_id=LOG_CHANNEL, text="restarted ❤️‍🩹")
         app = web.AppRunner(await web_server())
         await app.setup()
         bind_address = "0.0.0.0"
         await web.TCPSite(app, bind_address, PORT).start()       
-
-        if REQ_CHANNEL1 != False:           
-            try:
-                _link = await self.create_chat_invite_link(chat_id=int(REQ_CHANNEL1), creates_join_request=True)
-                self.req_link1 = _link.invite_link
-            except Exception as e:
-                logging.info(f"Make Sure REQ_CHANNEL 1 ID is correct or {e}")
-        if REQ_CHANNEL2 != False:
-            try:
-                _link = await self.create_chat_invite_link(chat_id=int(REQ_CHANNEL2), creates_join_request=True)
-                self.req_link2 = _link.invite_link
-            except Exception as e:
-                logging.info(f"Make Sure REQ_CHANNEL 2 ID is correct or {e}")
-
         await restart_bot(self)
         
     async def stop(self, *args):
