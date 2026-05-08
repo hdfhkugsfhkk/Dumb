@@ -1159,7 +1159,182 @@ async def join_reqs(client, message: ChatJoinRequest):
     
 @Client.on_message(filters.command("reload"))
 async def reload_db(client, message):
-
     await load_config()
-
     await message.reply("Reloaded config")
+
+
+DB_VARS = ["DATABASE1", "DATABASE2", "DATABASE3"]
+
+
+async def get_config():
+    data = await db.config.find_one({"_id": "CONFIG"})
+    return data if data else {}
+
+
+@Client.on_message(filters.command("update"))
+async def update_menu(client, message):
+    data = await get_config()
+    admins = data.get("ADMINS", [])
+
+    if message.from_user.id not in admins:
+        return
+
+    buttons = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("Admin", callback_data="upd_admin"),
+            InlineKeyboardButton("DB", callback_data="upd_db")
+        ]
+    ])
+
+    await message.reply(
+        "Update Panel",
+        reply_markup=buttons
+    )
+
+
+@Client.on_callback_query(filters.regex("^upd_admin$"))
+async def admin_panel(client, query):
+    data = await get_config()
+    admins = data.get("ADMINS", [])
+
+    if query.from_user.id not in admins:
+        return
+
+    text = "**Current Admins:**\n\n"
+
+    if admins:
+        for i in admins:
+            text += f"`{i}`\n"
+    else:
+        text += "No admins saved"
+
+    buttons = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("Add Admin", callback_data="add_admin")
+        ],
+        [
+            InlineKeyboardButton("Clear Admins", callback_data="clear_admin")
+        ]
+    ])
+
+    await query.message.edit_text(
+        text,
+        reply_markup=buttons
+    )
+
+
+@Client.on_callback_query(filters.regex("^add_admin$"))
+async def add_admin(client, query):
+    data = await get_config()
+    admins = data.get("ADMINS", [])
+
+    if query.from_user.id not in admins:
+        return
+
+    await query.message.reply(
+        "Send new admin id"
+    )
+
+    reply = await client.listen(
+        chat_id=query.message.chat.id,
+        user_id=query.from_user.id
+    )
+
+    try:
+        admin_id = int(reply.text)
+
+        if admin_id not in admins:
+            admins.append(admin_id)
+
+        await db.config.update_one(
+            {"_id": "CONFIG"},
+            {"$set": {"ADMINS": admins}},
+            upsert=True
+        )
+
+        await reply.reply(
+            f"Added `{admin_id}`"
+        )
+
+    except Exception as e:
+        await reply.reply(f"Error:\n`{e}`")
+
+
+@Client.on_callback_query(filters.regex("^clear_admin$"))
+async def clear_admin(client, query):
+    data = await get_config()
+    admins = data.get("ADMINS", [])
+    if query.from_user.id not in admins:
+        return
+    await db.config.update_one(
+        {"_id": "CONFIG"},
+        {"$set": {"ADMINS": []}},
+        upsert=True
+    )
+    await query.answer(
+        "Admins cleared",
+        show_alert=True
+    )
+
+
+@Client.on_callback_query(filters.regex("^upd_db$"))
+async def db_panel(client, query):
+
+    data = await get_config()
+    admins = data.get("ADMINS", [])
+
+    if query.from_user.id not in admins:
+        return
+
+    text = "**Current DB Values:**\n\n"
+
+    for var in DB_VARS:
+        text += f"**{var}** : `{data.get(var, 'Not Set')}`\n"
+
+    buttons = []
+
+    for var in DB_VARS:
+        buttons.append([
+            InlineKeyboardButton(
+                f"Edit {var}",
+                callback_data=f"editdb_{var}"
+            )
+        ])
+
+    await query.message.edit_text(
+        text,
+        reply_markup=InlineKeyboardMarkup(buttons)
+    )
+
+
+@Client.on_callback_query(filters.regex("^editdb_"))
+async def edit_db(client, query):
+
+    data = await get_config()
+    admins = data.get("ADMINS", [])
+
+    if query.from_user.id not in admins:
+        return
+
+    var = query.data.split("_", 1)[1]
+
+    await query.message.reply(
+        f"Send new value for `{var}`"
+    )
+
+    reply = await client.listen(
+        chat_id=query.message.chat.id,
+        user_id=query.from_user.id
+    )
+
+    value = reply.text
+
+    await db.config.update_one(
+        {"_id": "CONFIG"},
+        {"$set": {var: value}},
+        upsert=True
+    )
+
+    await reply.reply(
+        f"Updated `{var}` = `{value}`"
+    )
