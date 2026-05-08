@@ -17,7 +17,7 @@ class Database:
         self.users = self.db.userss
         self.fsub = self.db.fsub
         self.req = self.db.join_requests
-
+        self.config = self.db.config
 
     def new_user(self, id, name):
         return dict(
@@ -128,7 +128,7 @@ class Database:
         return res.modified_count
     async def del_all_join_req(self):
         await self.users.delete_many({})
-        
+    
     async def set_link(self, link: str):
         await self.files.update_one(
             {"_id": "ONE_LINK"},
