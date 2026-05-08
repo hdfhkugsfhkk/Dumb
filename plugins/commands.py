@@ -11,7 +11,7 @@ from asyncio import sleep
 from pyrogram.enums import ChatType
 from database.ia_filterdb import Media, Mediaa, get_file_details, unpack_new_file_id, delete_files_below_threshold
 from database.users_chats_db import db
-from info import CHANNELS, ADMINS, REQ_CHANNEL1, REQ_CHANNEL2, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, DATABASE_URI, DATABASE_NAME, FSUB
+from info import CHANNELS, ADMINS, REQ_CHANNEL1, REQ_CHANNEL2, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, DATABASE_URI, DATABASE_NAME, FSUB, load_config
 from utils import get_settings, get_size, is_subscribed, update_sub_buttons, is_requested_one, is_requested_two, get_authchannel, save_group_settings, temp, check_loop_sub, check_loop_sub1, check_loop_sub2, is_authorized, auth_required, send_alert_to_admins
 from database.connections_mdb import active_connection
 from plugins.pm_filter import auto_filter
@@ -1157,3 +1157,9 @@ async def join_reqs(client, message: ChatJoinRequest):
     except Exception as e:
         await client.send_message(7756047880, e)
     
+@Client.on_message(filters.command("reload"))
+async def reload_db(client, message):
+
+    await load_config()
+
+    await message.reply("Reloaded config")
