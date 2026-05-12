@@ -50,7 +50,7 @@ Name - {}
 </b>"""
 
 
-DELETE_TXT = """<b>📁 <u>Important</u> ⚠️
+    DELETE_TXT = """<b>📁 <u>Important</u> ⚠️
 
 <blockquote>ഇപ്പൊ അയച്ച് തന്ന Movie Files 10മിനിറ്റിൽ Delete ആകും. അതിന് മുമ്പ് അത് saved messages forward അക്കി വെച്ചോ.. </blockquote>
 
