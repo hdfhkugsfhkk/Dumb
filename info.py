@@ -2,6 +2,7 @@ import re
 from os import environ
 from Script import script
 from pyrogram import utils as pyroutils
+from database.users_chats_db import db
 
 id_pattern = re.compile(r'^.\d+$')
 def is_enabled(value, default):
