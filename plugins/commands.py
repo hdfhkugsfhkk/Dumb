@@ -11,8 +11,8 @@ from asyncio import sleep
 from pyrogram.enums import ChatType
 from database.ia_filterdb import Media, Mediaa, get_file_details, unpack_new_file_id, delete_files_below_threshold
 from database.users_chats_db import db
-from info import CHANNELS, ADMINS, REQ_CHANNEL1, REQ_CHANNEL2, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, DATABASE_URI, DATABASE_NAME, FSUB, load_config
-from utils import get_settings, get_size, is_subscribed, update_sub_buttons, get_authchannel, save_group_settings, temp, is_authorized, auth_required, send_alert_to_admins
+from info import CHANNELS, ADMINS, REQ_CHANNEL1, REQ_CHANNEL2, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, DATABASE_URI, DATABASE_NAME, FSUB
+from utils import get_settings, load_config, get_size, is_subscribed, update_sub_buttons, get_authchannel, save_group_settings, temp, is_authorized, auth_required, send_alert_to_admins
 from database.connections_mdb import active_connection
 from plugins.pm_filter import auto_filter
 import re
