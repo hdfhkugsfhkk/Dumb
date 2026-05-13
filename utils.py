@@ -1,6 +1,6 @@
 import logging
 from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid
-from info import REQ_CHANNEL1, REQ_CHANNEL2, LONG_IMDB_DESCRIPTION, MAX_LIST_ELM, ADMINS, AUTH_GROUPS, AUTH_USERS, BOT_IS_PUBLIC, SET_SYDSEC, LOG_CHANNEL
+from info import REQ_CHANNEL1, REQ_CHANNEL2, LONG_IMDB_DESCRIPTION, DATABASE_URI, DATABASE_URI2, DATABASE_URI3, MAX_LIST_ELM, ADMINS, AUTH_GROUPS, AUTH_USERS, BOT_IS_PUBLIC, SET_SYDSEC, LOG_CHANNEL
 from imdb import Cinemagoer
 import asyncio
 from pyrogram.types import Message, InlineKeyboardButton
@@ -33,6 +33,14 @@ SMART_CLOSE = '”'
 START_CHAR = ('\'', '"', SMART_OPEN)
 
 # temp db for banned 
+async def load_config():
+    global DATABASE_URI, DATABASE_URI2, DATABASE_URI3, ADMINS
+    data = await db.config.find_one({"_id": "CONFIG"}) or {}
+    DATABASE_URI = data.get("DATABASE1") #Dont touch here
+    DATABASE_URI2 = data.get("DATABASE2") #Dont touch here
+    DATABASE_URI3 = data.get("DATABASE3") #Dont touch here
+
+    ADMINS = data.get("ADMINS", [])
 class temp(object):
     BANNED_USERS = []
     BANNED_CHATS = []
