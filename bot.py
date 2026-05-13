@@ -12,7 +12,7 @@ from pyrogram.raw.all import layer
 from database.ia_filterdb import Media
 from database.users_chats_db import db
 from info import *
-from utils import temp
+from utils import temp, load_config
 from typing import Union, Optional, AsyncGenerator
 from pyrogram import types
 from plugins.commands import restarti
