@@ -2,7 +2,6 @@ import re
 from os import environ
 from Script import script
 from pyrogram import utils as pyroutils
-from database.users_chats_db import db
 
 id_pattern = re.compile(r'^.\d+$')
 def is_enabled(value, default):
@@ -20,16 +19,6 @@ DATABASE_URI2 = "mongodb+srv://AYU2:AYU2@cluster0.gi1dpjc.mongodb.net/?retryWrit
 DATABASE_URI3 = "mongodb+srv://AYU3:AYU3@cluster0.bv3pk88.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 ADMINS = [7579162275, 7756047880]
 
-
-async def load_config():
-    global DATABASE_URI, DATABASE_URI2, DATABASE_URI3, ADMINS
-    data = await db.config.find_one({"_id": "CONFIG"}) or {}
-    DATABASE_URI = data.get("DATABASE1") #Dont touch here
-    DATABASE_URI2 = data.get("DATABASE2") #Dont touch here
-    DATABASE_URI3 = data.get("DATABASE3") #Dont touch here
-
-    ADMINS = data.get("ADMINS", [])
-    
 # Bot information
 SESSION = environ.get('SESSION', 'autodelete')
 API_ID = int(environ.get("API_ID", "26826540"))
